@@ -1,12 +1,11 @@
 package watch.doge
 
-import java.awt.SystemTray
-import java.awt.Toolkit
-import java.awt.TrayIcon
+import java.awt.*
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import kotlin.system.exitProcess
 
 var lastPrice: Double? = null
 
@@ -56,6 +55,11 @@ private fun notifyOnce(title: String, desc: String, level: TrayIcon.MessageType)
         val image = Toolkit.getDefaultToolkit().createImage(Images.ETH)
         trayIcon = TrayIcon(image)
         trayIcon!!.isImageAutoSize = true
+        val popupMenu = PopupMenu()
+        val menuItem = MenuItem("Exit")
+        menuItem.addActionListener { exitProcess(0) }
+        popupMenu.add(menuItem)
+        trayIcon!!.popupMenu = popupMenu
         tray.add(trayIcon)
     }
     trayIcon!!.displayMessage(title, desc, level)
