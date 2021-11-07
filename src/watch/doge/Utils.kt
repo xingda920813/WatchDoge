@@ -1,6 +1,7 @@
 package watch.doge
 
 import java.awt.*
+import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -9,12 +10,18 @@ import kotlin.system.exitProcess
 
 var lastPrice: Double? = null
 
+private var client: HttpClient? = null
 private var trayIcon: TrayIcon? = null
 
 fun fetchPrice(): Double {
-    val client = HttpClient.newHttpClient()
+    if (client == null) client = HttpClient.newHttpClient()
     val req = HttpRequest.newBuilder(URI.create("https://www.okex.com/api/index/v3/ETH-USDT/constituents")).build()
-    val res = client.send(req, HttpResponse.BodyHandlers.ofString())
+    val res = try {
+        client!!.send(req, HttpResponse.BodyHandlers.ofString())
+    } catch (ex: IOException) {
+        ex.printStackTrace()
+        return Double.NaN
+    }
     val body =  res.body()
     val last = extractPrice(body)
     return last.toDouble()
@@ -36,7 +43,7 @@ fun notifyOnce(price: Double) {
         if (changeInPercentage >= 0.02 || changeInPercentage <= -0.02) {
             level = TrayIcon.MessageType.WARNING
         }
-        val changeInDesc = (if (changeInPercentage >= 0) "上涨 " else "下跌 ") + formatPrice(changeInPercentage * 100) + '%'
+        val changeInDesc = (if (changeInPercentage >= 0) " +" else " -") + formatPrice(changeInPercentage * 100) + '%'
         desc = "ETH/USDT 在 15 分钟内$changeInDesc, 现报 $title, 前值 ${formatPrice(lastPrice!!)}" +
                 if (level == TrayIcon.MessageType.WARNING) ". 请注意控制风险." else ""
     } else {
@@ -50,7 +57,6 @@ private fun formatPrice(price: Double) = String.format("%.2f", price)
 @Synchronized
 private fun notifyOnce(title: String, desc: String, level: TrayIcon.MessageType) {
     if (trayIcon == null) {
-        if (!SystemTray.isSupported()) return
         val tray = SystemTray.getSystemTray()
         val image = Toolkit.getDefaultToolkit().createImage(Images.ETH)
         trayIcon = TrayIcon(image)
