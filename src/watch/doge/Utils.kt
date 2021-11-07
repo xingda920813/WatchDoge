@@ -43,7 +43,7 @@ fun notifyOnce(price: Double) {
         if (changeInPercentage >= 0.02 || changeInPercentage <= -0.02) {
             level = TrayIcon.MessageType.WARNING
         }
-        val changeInDesc = (if (changeInPercentage >= 0) " +" else " -") + formatPrice(changeInPercentage * 100) + '%'
+        val changeInDesc = (if (changeInPercentage >= 0) " +" else " ") + formatPrice(changeInPercentage * 100) + '%'
         desc = "ETH/USDT 在 15 分钟内$changeInDesc, 现报 $title, 前值 ${formatPrice(lastPrice!!)}" +
                 if (level == TrayIcon.MessageType.WARNING) ". 请注意控制风险." else ""
     } else {
