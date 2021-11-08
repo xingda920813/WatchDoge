@@ -7,7 +7,7 @@ import java.net.http.*;
 
 public class Utils {
 
-    public static Double lastPrice;
+    public static double lastPrice = Double.NaN;
 
     private static HttpClient sClient;
     private static TrayIcon sTrayIcon;
@@ -38,7 +38,7 @@ public class Utils {
         final String title = formatPrice(price);
         TrayIcon.MessageType level = TrayIcon.MessageType.INFO;
         final String desc;
-        if (lastPrice != null) {
+        if (!Double.isNaN(lastPrice)) {
             final double changeInPercentage = (price - lastPrice) / lastPrice;
             if (changeInPercentage >= 0.01 || changeInPercentage <= -0.01) {
                 level = TrayIcon.MessageType.WARNING;
