@@ -40,7 +40,7 @@ public class Utils {
         final String desc;
         if (!Double.isNaN(lastPrice)) {
             final double changeInPercentage = (price - lastPrice) / lastPrice;
-            if (changeInPercentage >= 0.01 || changeInPercentage <= -0.01) {
+            if (changeInPercentage >= 0.008 || changeInPercentage <= -0.008) {
                 level = TrayIcon.MessageType.WARNING;
             }
             final String changeInDesc = (changeInPercentage >= 0 ? "+" : "") + formatPrice(changeInPercentage * 100) + '%';
