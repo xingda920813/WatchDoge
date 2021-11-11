@@ -14,7 +14,7 @@ public class Utils {
 
     public static double fetchPrice() {
         if (sClient == null) sClient = HttpClient.newHttpClient();
-        final HttpRequest req = HttpRequest.newBuilder(URI.create("https://www.okex.com/api/index/v3/ETH-USDT/constituents")).build();
+        final HttpRequest req = HttpRequest.newBuilder(URI.create("https://capi.bitgetapi.com/api/swap/v3/market/mark_price?symbol=cmt_ethusdt")).build();
         final HttpResponse<String> res;
         try {
             res = sClient.send(req, HttpResponse.BodyHandlers.ofString());
@@ -28,7 +28,7 @@ public class Utils {
     }
 
     private static String extractPrice(String res) {
-        final String key = "\"last\":\"";
+        final String key = "\"mark_price\":\"";
         final int start = res.indexOf(key) + key.length();
         final int end = res.indexOf('"', start);
         return res.substring(start, end);
