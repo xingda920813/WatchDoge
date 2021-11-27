@@ -58,17 +58,17 @@ public class Utils {
 
     private static synchronized void notifyOnce(String title, String desc, TrayIcon.MessageType level) {
         if (sTrayIcon == null) {
-            final SystemTray tray = SystemTray.getSystemTray();
-            final Image image = Toolkit.getDefaultToolkit().createImage(Images.ETH);
-            sTrayIcon = new TrayIcon(image);
+            sTrayIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(Images.ETH));
             sTrayIcon.setImageAutoSize(true);
             final PopupMenu popupMenu = new PopupMenu();
             final MenuItem menuItem = new MenuItem("Exit");
-            menuItem.addActionListener(e -> System.exit(0));
+            final Font defaultFont = Font.decode(null);
+            menuItem.setFont(defaultFont.deriveFont(defaultFont.getSize() * Toolkit.getDefaultToolkit().getScreenResolution() / 96F));
+            menuItem.addActionListener(ev -> System.exit(0));
             popupMenu.add(menuItem);
             sTrayIcon.setPopupMenu(popupMenu);
             try {
-                tray.add(sTrayIcon);
+                SystemTray.getSystemTray().add(sTrayIcon);
             } catch (AWTException ex) {
                 throw new RuntimeException(ex);
             }
