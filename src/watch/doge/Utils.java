@@ -13,15 +13,19 @@ public class Utils {
     private static TrayIcon sTrayIcon;
 
     public static double fetchPrice() {
+        try {
+            return fetchPriceCore();
+        } catch (IOException | InterruptedException ignored) {}
+        try {
+            return fetchPriceCore();
+        } catch (IOException | InterruptedException ignored) {}
+        return Double.NaN;
+    }
+
+    private static double fetchPriceCore() throws IOException, InterruptedException {
         if (sClient == null) sClient = HttpClient.newHttpClient();
         final HttpRequest req = HttpRequest.newBuilder(URI.create("https://capi.bitgetapi.com/api/swap/v3/market/mark_price?symbol=cmt_ethusdt")).build();
-        final HttpResponse<String> res;
-        try {
-            res = sClient.send(req, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException ex) {
-            ex.printStackTrace();
-            return Double.NaN;
-        }
+        final HttpResponse<String> res = sClient.send(req, HttpResponse.BodyHandlers.ofString());
         final String body =  res.body();
         final String last = extractPrice(body);
         return Double.parseDouble(last);
